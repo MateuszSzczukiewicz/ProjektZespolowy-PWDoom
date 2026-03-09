@@ -16,13 +16,15 @@ ProjektZespolowy-PWDoom/
 ├── run.sh                   # Build + run
 ├── watch.sh                 # File watcher (auto-rebuild)
 │
-├── src/                     # Source code
+├── src/                     # Implementation (.c)
 │   ├── main.c
 │   └── game/
-│       ├── game.h
 │       └── game.c
 │
-├── include/                 # Public headers
+├── include/                 # Public headers (.h)
+│   └── game/
+│       └── game.h
+│
 ├── assets/                  # Game assets (copied to build dir)
 │   ├── textures/
 │   ├── sounds/
