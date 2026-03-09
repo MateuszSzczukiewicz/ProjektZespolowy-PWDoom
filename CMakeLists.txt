@@ -110,15 +110,15 @@ endif()
 if(CPPCHECK_EXE)
     add_custom_target(cppcheck
         COMMAND ${CPPCHECK_EXE}
-            --enable=all
+            --enable=warning,style,performance,portability
             --std=c99
             --suppress=missingInclude
             --suppress=missingIncludeSystem
-            --suppress=unusedFunction
             --suppress=unmatchedSuppression
             --suppress=checkersReport
-            --project=${CMAKE_BINARY_DIR}/compile_commands.json
-            --file-filter=${CMAKE_CURRENT_SOURCE_DIR}/src/
+            -I ${CMAKE_CURRENT_SOURCE_DIR}/src
+            -I ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${PWDOOM_SOURCES}
             --error-exitcode=1
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Running cppcheck..."
