@@ -1,15 +1,18 @@
 #ifndef PWDOOM_GAME_H
 #define PWDOOM_GAME_H
 
+#include "game/map.h"
+#include "game/player.h"
 #include "raylib.h"
 
 typedef struct {
-    Vector2 player_pos;
-} Game;
+    PlayerState player;
+    LevelMap map;
+    Camera3D camera;
+} GameState;
 
-void game_init(Game *game);
-void game_update(Game *game, float dt);
-void game_render(const Game *game);
-void game_shutdown(Game *game);
+void game_init(GameState *game);
+void game_update(GameState *game, float dt);
+void game_render(const GameState *game);
 
 #endif
