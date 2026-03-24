@@ -75,6 +75,8 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     -fstack-protector-strong
 )
 
+add_compile_definitions(_GNU_SOURCE)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 
 # Copy assets to build directory
