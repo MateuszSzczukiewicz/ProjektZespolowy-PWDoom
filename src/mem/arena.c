@@ -1,12 +1,11 @@
-#define _GNU_SOURCE
 #include "mem/arena.h"
 
 t_arena arena_create(size_t reserve_size)
 {
+	if (reserve_size == 0) reserve_size = 1;
 	t_arena	arena = {0};
 	arena.reserve_size = ARENA_ALIGN_UP_TO_PAGE(reserve_size);
 
-	if (reserve_size == 0) reserve_size = 1;
 	#if defined(_WIN32)
 		arena.base = VirtualAlloc(NULL, arena.reserve_size, MEM_RESERVE, PAGE_NOACCESS);
     	if (arena.base == NULL) ARENA_FATAL_ERROR("VirtualAlloc failed in arena_create");

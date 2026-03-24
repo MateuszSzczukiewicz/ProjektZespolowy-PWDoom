@@ -18,7 +18,7 @@
 
 # ifndef ARENA_FATAL_ERROR
 #  define ARENA_FATAL_ERROR(msg) \
-	do { fprintf(stderr, "Arena Fatal Error: %s\n", msg); abort(); } while(0)
+	do { (void)fprintf(stderr, "Arena Fatal Error: %s\n", msg); abort(); } while(0)
 # endif
 
 
