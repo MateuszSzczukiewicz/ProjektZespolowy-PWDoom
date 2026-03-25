@@ -14,5 +14,6 @@ typedef struct {
 void game_init(GameState *game);
 void game_update(GameState *game, float dt);
 void game_render(const GameState *game);
+void game_shutdown(GameState *game);
 
 #endif
