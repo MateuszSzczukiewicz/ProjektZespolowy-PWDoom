@@ -4,6 +4,7 @@
 #include "raylib.h"
 
 #include <assert.h>
+#include <float.h>
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -17,6 +18,7 @@
 
 static int16_t upper_clip[SCREEN_W];
 static int16_t lower_clip[SCREEN_W];
+static float zbuffer[SCREEN_W];
 
 typedef struct {
     int index;
@@ -31,6 +33,7 @@ void render_walls(const LevelMap *map, const PlayerState *player)
     for (int i = 0; i < SCREEN_W; i++) {
         upper_clip[i] = -1;
         lower_clip[i] = SCREEN_H;
+        zbuffer[i] = FLT_MAX;
     }
 
     RenderSeg segs[MAX_LINEDEFS];
@@ -192,7 +195,21 @@ void render_walls(const LevelMap *map, const PlayerState *player)
             current_y_bfloor = y_bfloor1 + (float)(draw_x1 - sx1) * step_bfloor;
         }
 
+        float tz_step = (tz2 - tz1) / (float)(sx2 - sx1);
+        float current_tz = tz1 + (float)(draw_x1 - sx1) * tz_step;
+
         for (int x = draw_x1; x <= draw_x2; x++) {
+            if (current_tz >= zbuffer[x]) {
+                current_y_ceil += step_ceil;
+                current_y_floor += step_floor;
+                if (is_portal) {
+                    current_y_bceil += step_bceil;
+                    current_y_bfloor += step_bfloor;
+                }
+                current_tz += tz_step;
+                continue;
+            }
+
             int yc = (int)current_y_ceil;
             int yf = (int)current_y_floor;
 
@@ -207,17 +224,15 @@ void render_walls(const LevelMap *map, const PlayerState *player)
             if (upper_clip[x] + 1 < yc) {
                 int limit = yc > lower_clip[x] ? lower_clip[x] : yc;
                 int start = upper_clip[x] + 1;
-                if (start < limit) {
+                if (start < limit)
                     DrawLine(x, start, x, limit, LIGHTGRAY);
-                }
             }
 
             if (lower_clip[x] - 1 > yf) {
                 int start = yf < upper_clip[x] ? upper_clip[x] : yf;
                 int limit = lower_clip[x] - 1;
-                if (start < limit) {
+                if (start < limit)
                     DrawLine(x, start, x, limit, BROWN);
-                }
             }
 
             int next_upper = draw_yc - 1;
@@ -247,15 +262,14 @@ void render_walls(const LevelMap *map, const PlayerState *player)
                     DrawLine(x, draw_yc, x, draw_yf, DARKGRAY);
                     next_upper = SCREEN_H;
                     next_lower = -1;
+                    zbuffer[x] = current_tz;
                 }
             }
 
-            if (next_upper > upper_clip[x]) {
+            if (next_upper > upper_clip[x])
                 upper_clip[x] = (int16_t)next_upper;
-            }
-            if (next_lower < lower_clip[x]) {
+            if (next_lower < lower_clip[x])
                 lower_clip[x] = (int16_t)next_lower;
-            }
 
             current_y_ceil += step_ceil;
             current_y_floor += step_floor;
@@ -263,6 +277,7 @@ void render_walls(const LevelMap *map, const PlayerState *player)
                 current_y_bceil += step_bceil;
                 current_y_bfloor += step_bfloor;
             }
+            current_tz += tz_step;
         }
     }
 }
