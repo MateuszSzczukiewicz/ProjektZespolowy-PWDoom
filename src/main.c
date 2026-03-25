@@ -6,7 +6,7 @@ int main(void)
     InitWindow(1280, 720, "PWDoom");
     SetTargetFPS(60);
 
-    Game game;
+    GameState game;
     game_init(&game);
 
     while (!WindowShouldClose()) {
