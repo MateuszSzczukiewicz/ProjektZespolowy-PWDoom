@@ -59,6 +59,4 @@ float get_floor_height(const LevelMap *map, float x, float z);
 
 void map_init(LevelMap *map);
 
-void map_render(const LevelMap *map);
-
 #endif

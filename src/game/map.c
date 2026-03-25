@@ -1,7 +1,6 @@
 #include "game/map.h"
 
 #include "game/doomdef.h"
-#include "raylib.h"
 
 #include <assert.h>
 #include <stddef.h>
@@ -92,69 +91,4 @@ float get_floor_height(const LevelMap *map, float x, float z)
         }
     }
     return 0.0f;
-}
-
-void map_render(const LevelMap *map)
-{
-    assert(map != NULL);
-
-    for (int i = 0; i < map->linedef_count; i++) {
-        const Linedef *line = &map->linedefs[i];
-        const Vertex *v1 = &map->vertices[line->start_vertex];
-        const Vertex *v2 = &map->vertices[line->end_vertex];
-
-        if (line->back_sidedef != NO_INDEX) {
-            uint16_t front_sec = map->sidedefs[line->front_sidedef].sector;
-            uint16_t back_sec = map->sidedefs[line->back_sidedef].sector;
-            float f_floor = map->sectors[front_sec].floor_height;
-            float b_floor = map->sectors[back_sec].floor_height;
-
-            if (f_floor < b_floor) {
-                Vector3 t1 = {v1->x, b_floor, v1->y};
-                Vector3 b1 = {v1->x, f_floor, v1->y};
-                Vector3 t2 = {v2->x, b_floor, v2->y};
-                Vector3 b2 = {v2->x, f_floor, v2->y};
-
-                DrawTriangle3D(t1, b1, b2, GRAY);
-                DrawTriangle3D(t1, b2, t2, GRAY);
-                DrawTriangle3D(t1, b2, b1, GRAY);
-                DrawTriangle3D(t1, t2, b2, GRAY);
-            } else if (b_floor < f_floor) {
-                Vector3 t1 = {v1->x, f_floor, v1->y};
-                Vector3 b1 = {v1->x, b_floor, v1->y};
-                Vector3 t2 = {v2->x, f_floor, v2->y};
-                Vector3 b2 = {v2->x, b_floor, v2->y};
-
-                DrawTriangle3D(t1, b1, b2, GRAY);
-                DrawTriangle3D(t1, b2, t2, GRAY);
-                DrawTriangle3D(t1, b2, b1, GRAY);
-                DrawTriangle3D(t1, t2, b2, GRAY);
-            }
-            continue;
-        }
-
-        float floor_h = 0.0f;
-        float ceil_h = 3.0f;
-
-        if (line->front_sidedef != NO_INDEX) {
-            uint16_t sec = map->sidedefs[line->front_sidedef].sector;
-            floor_h = map->sectors[sec].floor_height;
-            ceil_h = map->sectors[sec].ceiling_height;
-        }
-
-        Vector3 v1_top = {v1->x, ceil_h, v1->y};
-        Vector3 v1_bot = {v1->x, floor_h, v1->y};
-        Vector3 v2_top = {v2->x, ceil_h, v2->y};
-        Vector3 v2_bot = {v2->x, floor_h, v2->y};
-
-        DrawTriangle3D(v1_top, v1_bot, v2_bot, DARKGRAY);
-        DrawTriangle3D(v1_top, v2_bot, v2_top, DARKGRAY);
-        DrawTriangle3D(v1_top, v2_bot, v1_bot, DARKGRAY);
-        DrawTriangle3D(v1_top, v2_top, v2_bot, DARKGRAY);
-
-        DrawLine3D(v1_top, v2_top, BLACK);
-        DrawLine3D(v1_bot, v2_bot, BLACK);
-        DrawLine3D(v1_bot, v1_top, BLACK);
-        DrawLine3D(v2_bot, v2_top, BLACK);
-    }
 }

@@ -1,9 +1,0 @@
-#ifndef PWDOOM_TABLES_H
-#define PWDOOM_TABLES_H
-
-#define FINEANGLES 8192U
-#define FINEMASK   (FINEANGLES - 1U)
-
-extern const float FINESINE[FINEANGLES + (FINEANGLES / 4U)];
-
-#endif
