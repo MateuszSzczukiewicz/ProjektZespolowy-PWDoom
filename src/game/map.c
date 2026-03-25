@@ -1,6 +1,6 @@
 #include "game/map.h"
-#include "game/doomdef.h"
 
+#include "game/doomdef.h"
 #include "raylib.h"
 
 #include <assert.h>
@@ -60,8 +60,10 @@ static bool point_in_sector(const LevelMap *map, uint16_t sector_idx, float x, f
     for (int i = 0; i < map->linedef_count; i++) {
         const Linedef *line = &map->linedefs[i];
 
-        bool is_front = (line->front_sidedef != NO_INDEX && map->sidedefs[line->front_sidedef].sector == sector_idx);
-        bool is_back = (line->back_sidedef != NO_INDEX && map->sidedefs[line->back_sidedef].sector == sector_idx);
+        bool is_front = (line->front_sidedef != NO_INDEX &&
+                         map->sidedefs[line->front_sidedef].sector == sector_idx);
+        bool is_back = (line->back_sidedef != NO_INDEX &&
+                        map->sidedefs[line->back_sidedef].sector == sector_idx);
 
         if (!is_front && !is_back) {
             continue;

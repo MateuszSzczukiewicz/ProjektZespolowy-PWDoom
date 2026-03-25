@@ -1,8 +1,8 @@
 #ifndef PWDOOM_MAP_H
 #define PWDOOM_MAP_H
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define MAX_VERTICES 1024
 #define MAX_SECTORS  256

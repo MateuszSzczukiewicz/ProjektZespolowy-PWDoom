@@ -10,7 +10,7 @@
 #define PLAYER_MOVE_SPEED 15.0f
 #define PLAYER_TURN_SPEED 2.5f
 #define PLAYER_EYE_HEIGHT 0.4f
-#define PLAYER_FRICTION 0.85f
+#define PLAYER_FRICTION   0.85f
 
 void player_init(PlayerState *player)
 {

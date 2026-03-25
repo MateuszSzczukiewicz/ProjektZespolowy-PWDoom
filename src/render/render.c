@@ -1,6 +1,6 @@
 #include "render/render.h"
-#include "game/doomdef.h"
 
+#include "game/doomdef.h"
 #include "raylib.h"
 
 #include <assert.h>
@@ -10,8 +10,8 @@
 
 #define SCREEN_W 1280
 #define SCREEN_H 720
-#define HALF_W (SCREEN_W / 2.0f)
-#define HALF_H (SCREEN_H / 2.0f)
+#define HALF_W   (SCREEN_W / 2.0f)
+#define HALF_H   (SCREEN_H / 2.0f)
 
 #define PROJ_DIST HALF_W
 
@@ -162,8 +162,10 @@ void render_walls(const LevelMap *map, const PlayerState *player)
             int draw_yc = yc;
             int draw_yf = yf;
 
-            if (draw_yc < upper_clip[x] + 1) draw_yc = upper_clip[x] + 1;
-            if (draw_yf > lower_clip[x] - 1) draw_yf = lower_clip[x] - 1;
+            if (draw_yc < upper_clip[x] + 1)
+                draw_yc = upper_clip[x] + 1;
+            if (draw_yf > lower_clip[x] - 1)
+                draw_yf = lower_clip[x] - 1;
 
             if (upper_clip[x] + 1 < yc) {
                 int limit = yc > lower_clip[x] ? lower_clip[x] : yc;
@@ -189,7 +191,8 @@ void render_walls(const LevelMap *map, const PlayerState *player)
                     int h = ybc > draw_yf ? draw_yf : ybc;
                     if (h >= draw_yc) {
                         DrawLine(x, draw_yc, x, h, GRAY);
-                        if (h > upper_clip[x]) upper_clip[x] = (int16_t)h;
+                        if (h > upper_clip[x])
+                            upper_clip[x] = (int16_t)h;
                     }
                 }
 
@@ -197,7 +200,8 @@ void render_walls(const LevelMap *map, const PlayerState *player)
                     int l = ybf < draw_yc ? draw_yc : ybf;
                     if (l <= draw_yf) {
                         DrawLine(x, l, x, draw_yf, GRAY);
-                        if (l < lower_clip[x]) lower_clip[x] = (int16_t)l;
+                        if (l < lower_clip[x])
+                            lower_clip[x] = (int16_t)l;
                     }
                 }
             } else {

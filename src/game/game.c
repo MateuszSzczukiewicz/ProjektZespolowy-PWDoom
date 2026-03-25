@@ -1,7 +1,7 @@
 #include "game/game.h"
-#include "render/render.h"
 
 #include "raylib.h"
+#include "render/render.h"
 
 #include <assert.h>
 #include <string.h>
