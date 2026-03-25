@@ -8,6 +8,11 @@ typedef struct {
     Vector3 position;
     float angle;
     float speed;
+    float dx;
+    float dz;
+    float view_z;
+    float floor_z;
+    int32_t sector_id;
 } PlayerState;
 
 void player_init(PlayerState *player);
