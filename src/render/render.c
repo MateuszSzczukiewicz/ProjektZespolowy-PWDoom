@@ -40,12 +40,22 @@ void render_walls(const LevelMap *map, const PlayerState *player)
         const Vertex *v1 = &map->vertices[line->start_vertex];
         const Vertex *v2 = &map->vertices[line->end_vertex];
 
-        float mid_x = (v1->x + v2->x) * 0.5f;
-        float mid_z = (v1->y + v2->y) * 0.5f;
-
-        float dx = mid_x - player->position.x;
-        float dz = mid_z - player->position.z;
-        segs[i].dist_sq = dx * dx + dz * dz;
+        float lx = v2->x - v1->x;
+        float lz = v2->y - v1->y;
+        float ex = player->position.x - v1->x;
+        float ez = player->position.z - v1->y;
+        float len_sq = lx * lx + lz * lz;
+        float t = (len_sq > 0.0f) ? (ex * lx + ez * lz) / len_sq : 0.0f;
+        if (t < 0.0f) {
+            t = 0.0f;
+        } else if (t > 1.0f) {
+            t = 1.0f;
+        }
+        float cpx = v1->x + t * lx;
+        float cpz = v1->y + t * lz;
+        float cx = cpx - player->position.x;
+        float cz = cpz - player->position.z;
+        segs[i].dist_sq = cx * cx + cz * cz;
     }
 
     for (int i = 0; i < map->linedef_count - 1; i++) {
@@ -66,10 +76,34 @@ void render_walls(const LevelMap *map, const PlayerState *player)
         const Vertex *v1 = &map->vertices[line->start_vertex];
         const Vertex *v2 = &map->vertices[line->end_vertex];
 
+        float pdx = player->position.x - v1->x;
+        float pdz = player->position.z - v1->y;
+        float lx = v2->x - v1->x;
+        float lz = v2->y - v1->y;
+        float nx = -lz;
+        float nz = lx;
+        int side = (pdx * nx + pdz * nz < 0.0f) ? 1 : 0;
+
+        if (side == 1) {
+            if (line->back_sidedef == NO_INDEX) {
+                continue;
+            }
+        }
+
         float dx1 = v1->x - player->position.x;
         float dz1 = v1->y - player->position.z;
         float dx2 = v2->x - player->position.x;
         float dz2 = v2->y - player->position.z;
+
+        if (side == 1) {
+            float tmp;
+            tmp = dx1;
+            dx1 = dx2;
+            dx2 = tmp;
+            tmp = dz1;
+            dz1 = dz2;
+            dz2 = tmp;
+        }
 
         float tx1 = dx1 * cos_a - dz1 * sin_a;
         float tz1 = dx1 * sin_a + dz1 * cos_a;
@@ -108,17 +142,20 @@ void render_walls(const LevelMap *map, const PlayerState *player)
             continue;
         }
 
+        uint16_t front_sd = (side == 0) ? line->front_sidedef : line->back_sidedef;
+        uint16_t back_sd = (side == 0) ? line->back_sidedef : line->front_sidedef;
+
         float ceil_h = 3.0f, floor_h = 0.0f;
         float back_ceil_h = 0.0f, back_floor_h = 0.0f;
-        bool is_portal = line->back_sidedef != NO_INDEX;
+        bool is_portal = back_sd != NO_INDEX;
 
-        if (line->front_sidedef != NO_INDEX) {
-            uint16_t sec = map->sidedefs[line->front_sidedef].sector;
+        if (front_sd != NO_INDEX) {
+            uint16_t sec = map->sidedefs[front_sd].sector;
             ceil_h = map->sectors[sec].ceiling_height;
             floor_h = map->sectors[sec].floor_height;
         }
         if (is_portal) {
-            uint16_t back_sec = map->sidedefs[line->back_sidedef].sector;
+            uint16_t back_sec = map->sidedefs[back_sd].sector;
             back_ceil_h = map->sectors[back_sec].ceiling_height;
             back_floor_h = map->sectors[back_sec].floor_height;
         }
@@ -183,6 +220,9 @@ void render_walls(const LevelMap *map, const PlayerState *player)
                 }
             }
 
+            int next_upper = draw_yc - 1;
+            int next_lower = draw_yf + 1;
+
             if (is_portal) {
                 int ybc = (int)current_y_bceil;
                 int ybf = (int)current_y_bfloor;
@@ -191,8 +231,7 @@ void render_walls(const LevelMap *map, const PlayerState *player)
                     int h = ybc > draw_yf ? draw_yf : ybc;
                     if (h >= draw_yc) {
                         DrawLine(x, draw_yc, x, h, GRAY);
-                        if (h > upper_clip[x])
-                            upper_clip[x] = (int16_t)h;
+                        next_upper = h;
                     }
                 }
 
@@ -200,15 +239,22 @@ void render_walls(const LevelMap *map, const PlayerState *player)
                     int l = ybf < draw_yc ? draw_yc : ybf;
                     if (l <= draw_yf) {
                         DrawLine(x, l, x, draw_yf, GRAY);
-                        if (l < lower_clip[x])
-                            lower_clip[x] = (int16_t)l;
+                        next_lower = l;
                     }
                 }
             } else {
                 if (draw_yc <= draw_yf) {
                     DrawLine(x, draw_yc, x, draw_yf, DARKGRAY);
-                    upper_clip[x] = SCREEN_H;
+                    next_upper = SCREEN_H;
+                    next_lower = -1;
                 }
+            }
+
+            if (next_upper > upper_clip[x]) {
+                upper_clip[x] = (int16_t)next_upper;
+            }
+            if (next_lower < lower_clip[x]) {
+                lower_clip[x] = (int16_t)next_lower;
             }
 
             current_y_ceil += step_ceil;
