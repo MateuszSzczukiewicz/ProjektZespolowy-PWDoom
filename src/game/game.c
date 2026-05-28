@@ -1,24 +1,43 @@
 #include "game/game.h"
 
-void game_init(Game *game)
+#include "mem/arena.h"
+#include "raylib.h"
+#include "render/bsp.h"
+#include "render/render.h"
+
+#include <assert.h>
+#include <string.h>
+
+void game_init(GameState *game, Arena *scratch)
 {
-    game->player_pos = (Vector2){640.0f, 360.0f};
+    assert(game != NULL);
+
+    memset(game, 0, sizeof(*game));
+    map_init(&game->map);
+    bsp_build(&game->bsp, &game->map, scratch);
+    player_init(&game->player);
+    player_update_camera(&game->player, &game->camera);
 }
 
-void game_update(Game *game, float dt)
+void game_update(GameState *game, float dt)
 {
-    (void)game;
-    (void)dt;
-    // TODO: input handling, physics, game logic
+    assert(game != NULL);
+
+    player_update(&game->player, (const LevelMap *)&game->map, dt);
+    player_update_camera(&game->player, &game->camera);
 }
 
-void game_render(const Game *game)
+void game_render(const GameState *game, Arena *scratch)
 {
-    DrawText("PWDoom", 560, 300, 40, RED);
-    DrawCircleV(game->player_pos, 10.0f, YELLOW);
+    assert(game != NULL);
+
+    render_walls(&game->map, &game->bsp, &game->player, scratch);
+
+    DrawFPS(10, 10);
 }
 
-void game_shutdown(Game *game)
+void game_shutdown(GameState *game)
 {
+    assert(game != NULL);
     (void)game;
 }

@@ -4,13 +4,13 @@
 
 int main(void)
 {
-    Arena scratch_arena = arena_create((size_t)(1024) * 1024 * 1024 * 32);
+    Arena scratch_arena = arena_create((size_t)32 * 1024 * 1024 * 1024);
 
     InitWindow(1280, 720, "PWDoom");
     SetTargetFPS(60);
 
-    Game game;
-    game_init(&game);
+    GameState game;
+    game_init(&game, &scratch_arena);
 
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
@@ -18,7 +18,7 @@ int main(void)
 
         BeginDrawing();
         ClearBackground(BLACK);
-        game_render(&game);
+        game_render(&game, &scratch_arena);
         EndDrawing();
         arena_reset(&scratch_arena);
     }
