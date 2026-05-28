@@ -121,25 +121,28 @@ static int32_t build_node(BSPTree *tree, const uint16_t *indices, uint16_t count
             float edy = seg->v2.y - seg->v1.y;
             intersect(seg->v1.x, seg->v1.y, edx, edy,
                       part->v1.x, part->v1.y, pdx, pdy, &ix, &iy);
-            uint32_t ifront = tree->seg_count++;
-            uint32_t iback = tree->seg_count++;
-            tree->segs[ifront].linedef = seg->linedef;
-            tree->segs[ifront].side = seg->side;
-            tree->segs[iback].linedef = seg->linedef;
-            tree->segs[iback].side = seg->side;
+
+            uint16_t orig = indices[i];
+            Vertex orig_v1 = seg->v1;
+            Vertex orig_v2 = seg->v2;
+            uint16_t new_idx = (uint16_t)tree->seg_count++;
+
+            tree->segs[new_idx].linedef = tree->segs[orig].linedef;
+
             if (s1 > 0) {
-                tree->segs[ifront].v1 = seg->v1;
-                tree->segs[ifront].v2 = (Vertex){ix, iy};
-                tree->segs[iback].v1 = (Vertex){ix, iy};
-                tree->segs[iback].v2 = seg->v2;
+                tree->segs[orig].v1 = orig_v1;
+                tree->segs[orig].v2 = (Vertex){ix, iy};
+                tree->segs[new_idx].v1 = (Vertex){ix, iy};
+                tree->segs[new_idx].v2 = orig_v2;
             } else {
-                tree->segs[ifront].v1 = (Vertex){ix, iy};
-                tree->segs[ifront].v2 = seg->v2;
-                tree->segs[iback].v1 = seg->v1;
-                tree->segs[iback].v2 = (Vertex){ix, iy};
+                tree->segs[orig].v1 = (Vertex){ix, iy};
+                tree->segs[orig].v2 = orig_v2;
+                tree->segs[new_idx].v1 = orig_v1;
+                tree->segs[new_idx].v2 = (Vertex){ix, iy};
             }
-            front_idx[fc++] = (uint16_t)ifront;
-            back_idx[bc++] = (uint16_t)iback;
+
+            front_idx[fc++] = orig;
+            back_idx[bc++] = new_idx;
         }
     }
 
@@ -176,7 +179,6 @@ void bsp_build(BSPTree *tree, const LevelMap *map)
         tree->segs[i].v1 = map->vertices[line->start_vertex];
         tree->segs[i].v2 = map->vertices[line->end_vertex];
         tree->segs[i].linedef = i;
-        tree->segs[i].side = 0;
     }
     tree->seg_count = map->linedef_count;
 

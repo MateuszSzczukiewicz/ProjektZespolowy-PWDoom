@@ -112,6 +112,16 @@ target_compile_options(test_arena PRIVATE -Wall -Wextra)
 target_link_libraries(test_arena PRIVATE m)
 add_test(NAME arena COMMAND test_arena)
 
+# BSP tree tests (no raylib dependency)
+add_executable(test_bsp tests/render/bsp_tests.c src/render/bsp.c src/game/map.c)
+target_include_directories(test_bsp PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+target_compile_options(test_bsp PRIVATE -Wall -Wextra)
+target_link_libraries(test_bsp PRIVATE m)
+add_test(NAME bsp COMMAND test_bsp)
+
 # Copy assets to build directory
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

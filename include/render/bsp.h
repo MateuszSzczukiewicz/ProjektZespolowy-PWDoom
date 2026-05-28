@@ -22,7 +22,6 @@ typedef struct {
     Vertex v1;
     Vertex v2;
     uint16_t linedef;
-    uint16_t side;
 } BSPSeg;
 
 typedef struct {
