@@ -77,6 +77,23 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 
+# Smoke tests (no raylib dependency)
+set(TEST_SOURCES
+    tests/test_smoke.c
+    src/game/map.c
+    src/game/player.c
+    src/game/collision.c
+)
+add_executable(test_smoke ${TEST_SOURCES})
+target_include_directories(test_smoke PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+target_link_libraries(test_smoke PRIVATE raylib m)
+target_compile_options(test_smoke PRIVATE -Wall -Wextra)
+enable_testing()
+add_test(NAME smoke COMMAND test_smoke)
+
 # Copy assets to build directory
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
