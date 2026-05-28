@@ -1,5 +1,4 @@
 #include "render/render.h"
-#include "render/bsp.h"
 
 #include "game/doomdef.h"
 #include "mem/arena.h"
@@ -21,9 +20,6 @@
 static int16_t upper_clip[SCREEN_W];
 static int16_t lower_clip[SCREEN_W];
 static float zbuffer[SCREEN_W];
-
-static BSPTree bsp_tree;
-static int bsp_built = 0;
 
 static void draw_seg(const LevelMap *map, const PlayerState *player,
                      Vertex v1, Vertex v2, const Linedef *line)
@@ -254,15 +250,13 @@ static void bsp_render_node(const BSPTree *tree, const LevelMap *map,
     }
 }
 
-void render_walls(const LevelMap *map, const PlayerState *player, Arena *scratch)
+void render_walls(const LevelMap *map, const BSPTree *bsp,
+                  const PlayerState *player, Arena *scratch)
 {
     assert(map != NULL);
+    assert(bsp != NULL);
     assert(player != NULL);
-
-    if (!bsp_built) {
-        bsp_build(&bsp_tree, map, scratch);
-        bsp_built = 1;
-    }
+    (void)scratch;
 
     for (int i = 0; i < SCREEN_W; i++) {
         upper_clip[i] = -1;
@@ -270,8 +264,8 @@ void render_walls(const LevelMap *map, const PlayerState *player, Arena *scratch
         zbuffer[i] = FLT_MAX;
     }
 
-    if (bsp_tree.node_count > 0)
-        bsp_render_node(&bsp_tree, map, player, 0);
-    else if (bsp_tree.leaf_count > 0)
-        bsp_render_node(&bsp_tree, map, player, -(int32_t)1);
+    if (bsp->node_count > 0)
+        bsp_render_node(bsp, map, player, 0);
+    else if (bsp->leaf_count > 0)
+        bsp_render_node(bsp, map, player, -(int32_t)1);
 }

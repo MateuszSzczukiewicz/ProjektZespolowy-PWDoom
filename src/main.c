@@ -10,7 +10,7 @@ int main(void)
     SetTargetFPS(60);
 
     GameState game;
-    game_init(&game);
+    game_init(&game, &scratch_arena);
 
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();

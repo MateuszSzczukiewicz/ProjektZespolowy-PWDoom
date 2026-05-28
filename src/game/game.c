@@ -2,17 +2,19 @@
 
 #include "mem/arena.h"
 #include "raylib.h"
+#include "render/bsp.h"
 #include "render/render.h"
 
 #include <assert.h>
 #include <string.h>
 
-void game_init(GameState *game)
+void game_init(GameState *game, Arena *scratch)
 {
     assert(game != NULL);
-    memset(game, 0, sizeof(*game));
 
+    memset(game, 0, sizeof(*game));
     map_init(&game->map);
+    bsp_build(&game->bsp, &game->map, scratch);
     player_init(&game->player);
     player_update_camera(&game->player, &game->camera);
 }
@@ -29,7 +31,7 @@ void game_render(const GameState *game, Arena *scratch)
 {
     assert(game != NULL);
 
-    render_walls(&game->map, &game->player, scratch);
+    render_walls(&game->map, &game->bsp, &game->player, scratch);
 
     DrawFPS(10, 10);
 }
