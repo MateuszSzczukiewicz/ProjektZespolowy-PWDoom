@@ -18,7 +18,7 @@ int main(void)
 
         BeginDrawing();
         ClearBackground(BLACK);
-        game_render(&game);
+        game_render(&game, &scratch_arena);
         EndDrawing();
         arena_reset(&scratch_arena);
     }

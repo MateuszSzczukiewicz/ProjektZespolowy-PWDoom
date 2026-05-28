@@ -11,7 +11,7 @@ static void test_bsp_build_counts(void)
     map_init(&map);
 
     BSPTree tree;
-    bsp_build(&tree, &map);
+    bsp_build(&tree, &map, NULL);
 
     assert(tree.node_count >= 1);
     assert(tree.leaf_count >= 1);
@@ -33,7 +33,7 @@ static void test_bsp_no_stale_segs(void)
     map_init(&map);
 
     BSPTree tree;
-    bsp_build(&tree, &map);
+    bsp_build(&tree, &map, NULL);
 
     uint8_t referenced[MAX_BSP_SEGS];
     memset(referenced, 0, sizeof(referenced));
@@ -59,7 +59,7 @@ static void test_bsp_node_children(void)
     map_init(&map);
 
     BSPTree tree;
-    bsp_build(&tree, &map);
+    bsp_build(&tree, &map, NULL);
 
     for (uint16_t i = 0; i < tree.node_count; i++) {
         int32_t f = tree.nodes[i].front;
@@ -90,7 +90,7 @@ static void test_bsp_root_is_valid(void)
     map_init(&map);
 
     BSPTree tree;
-    bsp_build(&tree, &map);
+    bsp_build(&tree, &map, NULL);
 
     if (tree.node_count > 0) {
         assert(tree.nodes[0].front != 0);

@@ -2,6 +2,7 @@
 #define PWDOOM_BSP_H
 
 #include "game/map.h"
+#include "mem/arena.h"
 
 #include <stdint.h>
 
@@ -40,6 +41,6 @@ typedef struct {
     uint16_t leaf_count;
 } BSPTree;
 
-void bsp_build(BSPTree *tree, const LevelMap *map);
+void bsp_build(BSPTree *tree, const LevelMap *map, Arena *scratch);
 
 #endif

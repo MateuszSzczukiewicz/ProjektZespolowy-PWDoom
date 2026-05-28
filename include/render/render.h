@@ -3,7 +3,8 @@
 
 #include "game/map.h"
 #include "game/player.h"
+#include "mem/arena.h"
 
-void render_walls(const LevelMap *map, const PlayerState *player);
+void render_walls(const LevelMap *map, const PlayerState *player, Arena *scratch);
 
 #endif

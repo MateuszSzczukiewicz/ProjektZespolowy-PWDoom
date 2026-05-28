@@ -1,5 +1,6 @@
 #include "game/game.h"
 
+#include "mem/arena.h"
 #include "raylib.h"
 #include "render/render.h"
 
@@ -24,11 +25,11 @@ void game_update(GameState *game, float dt)
     player_update_camera(&game->player, &game->camera);
 }
 
-void game_render(const GameState *game)
+void game_render(const GameState *game, Arena *scratch)
 {
     assert(game != NULL);
 
-    render_walls(&game->map, &game->player);
+    render_walls(&game->map, &game->player, scratch);
 
     DrawFPS(10, 10);
 }

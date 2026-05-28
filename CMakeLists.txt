@@ -113,7 +113,7 @@ target_link_libraries(test_arena PRIVATE m)
 add_test(NAME arena COMMAND test_arena)
 
 # BSP tree tests (no raylib dependency)
-add_executable(test_bsp tests/render/bsp_tests.c src/render/bsp.c src/game/map.c)
+add_executable(test_bsp tests/render/bsp_tests.c src/render/bsp.c src/game/map.c src/mem/arena.c)
 target_include_directories(test_bsp PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/include"

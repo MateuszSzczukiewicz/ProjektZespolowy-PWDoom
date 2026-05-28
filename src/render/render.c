@@ -2,6 +2,7 @@
 #include "render/bsp.h"
 
 #include "game/doomdef.h"
+#include "mem/arena.h"
 #include "raylib.h"
 
 #include <assert.h>
@@ -253,13 +254,13 @@ static void bsp_render_node(const BSPTree *tree, const LevelMap *map,
     }
 }
 
-void render_walls(const LevelMap *map, const PlayerState *player)
+void render_walls(const LevelMap *map, const PlayerState *player, Arena *scratch)
 {
     assert(map != NULL);
     assert(player != NULL);
 
     if (!bsp_built) {
-        bsp_build(&bsp_tree, map);
+        bsp_build(&bsp_tree, map, scratch);
         bsp_built = 1;
     }
 

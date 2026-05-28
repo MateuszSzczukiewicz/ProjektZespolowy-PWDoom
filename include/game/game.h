@@ -3,6 +3,7 @@
 
 #include "game/map.h"
 #include "game/player.h"
+#include "mem/arena.h"
 #include "raylib.h"
 
 typedef struct {
@@ -13,7 +14,7 @@ typedef struct {
 
 void game_init(GameState *game);
 void game_update(GameState *game, float dt);
-void game_render(const GameState *game);
+void game_render(const GameState *game, Arena *scratch);
 void game_shutdown(GameState *game);
 
 #endif

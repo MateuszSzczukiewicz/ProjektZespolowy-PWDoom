@@ -36,7 +36,7 @@ static void intersect(float ax, float ay, float adx, float ady,
     *oy = ay + t * ady;
 }
 
-static int32_t build_node(BSPTree *tree, const uint16_t *indices, uint16_t count)
+static int32_t build_node(BSPTree *tree, const uint16_t *indices, uint16_t count, Arena *scratch)
 {
     if (count <= LEAF_SIZE) {
         uint32_t first = tree->leaf_seg_count;
@@ -102,9 +102,16 @@ static int32_t build_node(BSPTree *tree, const uint16_t *indices, uint16_t count
     pdx /= plen;
     pdy /= plen;
 
-    uint16_t front_idx[MAX_BSP_SEGS];
-    uint16_t back_idx[MAX_BSP_SEGS];
+    uint16_t front_stack[MAX_BSP_SEGS];
+    uint16_t back_stack[MAX_BSP_SEGS];
+    uint16_t *front_idx = front_stack;
+    uint16_t *back_idx = back_stack;
     uint16_t fc = 0, bc = 0;
+
+    if (scratch != NULL) {
+        front_idx = arena_alloc(scratch, count * sizeof(uint16_t));
+        back_idx = arena_alloc(scratch, count * sizeof(uint16_t));
+    }
 
     for (uint16_t i = 0; i < count; i++) {
         const BSPSeg *seg = &tree->segs[indices[i]];
@@ -146,8 +153,8 @@ static int32_t build_node(BSPTree *tree, const uint16_t *indices, uint16_t count
         }
     }
 
-    int32_t front_child = build_node(tree, front_idx, fc);
-    int32_t back_child = build_node(tree, back_idx, bc);
+    int32_t front_child = build_node(tree, front_idx, fc, scratch);
+    int32_t back_child = build_node(tree, back_idx, bc, scratch);
 
     uint16_t node = tree->node_count;
     tree->nodes[node].front = front_child;
@@ -161,7 +168,7 @@ static int32_t build_node(BSPTree *tree, const uint16_t *indices, uint16_t count
     return (int32_t)node;
 }
 
-void bsp_build(BSPTree *tree, const LevelMap *map)
+void bsp_build(BSPTree *tree, const LevelMap *map, Arena *scratch)
 {
     assert(tree != NULL);
     assert(map != NULL);
@@ -186,5 +193,5 @@ void bsp_build(BSPTree *tree, const LevelMap *map)
     for (uint16_t i = 0; i < map->linedef_count; i++)
         init_idx[i] = i;
 
-    build_node(tree, init_idx, map->linedef_count);
+    build_node(tree, init_idx, map->linedef_count, scratch);
 }
