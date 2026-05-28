@@ -98,10 +98,7 @@ void render_walls(const LevelMap *map, const PlayerState *player)
             int temp_x = sx1;
             sx1 = sx2;
             sx2 = temp_x;
-            float temp_f = tx1;
-            tx1 = tx2;
-            tx2 = temp_f;
-            temp_f = xscale1;
+            float temp_f = xscale1;
             xscale1 = xscale2;
             xscale2 = temp_f;
         }
