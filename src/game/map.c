@@ -81,14 +81,20 @@ static bool point_in_sector(const LevelMap *map, uint16_t sector_idx, float x, f
     return (count % 2) != 0;
 }
 
-float get_floor_height(const LevelMap *map, float x, float z)
+uint16_t get_sector_at(const LevelMap *map, float x, float z)
 {
     assert(map != NULL);
 
     for (uint16_t i = 0; i < map->sector_count; i++) {
         if (point_in_sector(map, i, x, z)) {
-            return map->sectors[i].floor_height;
+            return i;
         }
     }
-    return 0.0f;
+    return 0;
+}
+
+float get_floor_height(const LevelMap *map, float x, float z)
+{
+    uint16_t sec = get_sector_at(map, x, z);
+    return map->sectors[sec].floor_height;
 }

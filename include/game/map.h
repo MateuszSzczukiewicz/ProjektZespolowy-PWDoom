@@ -55,6 +55,7 @@ typedef struct {
     uint16_t linedef_count;
 } LevelMap;
 
+uint16_t get_sector_at(const LevelMap *map, float x, float z);
 float get_floor_height(const LevelMap *map, float x, float z);
 
 void map_init(LevelMap *map);

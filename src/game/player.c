@@ -81,7 +81,8 @@ void player_update(PlayerState *player, const LevelMap *map, float dt)
 
     try_move(map, player, player->dx, player->dz, dt);
 
-    player->floor_z = get_floor_height(map, player->position.x, player->position.z);
+    player->sector_id = get_sector_at(map, player->position.x, player->position.z);
+    player->floor_z = map->sectors[player->sector_id].floor_height;
     player->view_z = player->floor_z + PLAYER_EYE_HEIGHT;
     player->position.y = player->view_z;
 }

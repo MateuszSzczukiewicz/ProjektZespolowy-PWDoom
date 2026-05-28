@@ -20,11 +20,6 @@ static int16_t upper_clip[SCREEN_W];
 static int16_t lower_clip[SCREEN_W];
 static float zbuffer[SCREEN_W];
 
-typedef struct {
-    int index;
-    float dist_sq;
-} RenderSeg;
-
 void render_walls(const LevelMap *map, const PlayerState *player)
 {
     assert(map != NULL);
@@ -36,46 +31,11 @@ void render_walls(const LevelMap *map, const PlayerState *player)
         zbuffer[i] = FLT_MAX;
     }
 
-    RenderSeg segs[MAX_LINEDEFS];
-    for (int i = 0; i < map->linedef_count; i++) {
-        segs[i].index = i;
-        const Linedef *line = &map->linedefs[i];
-        const Vertex *v1 = &map->vertices[line->start_vertex];
-        const Vertex *v2 = &map->vertices[line->end_vertex];
-
-        float lx = v2->x - v1->x;
-        float lz = v2->y - v1->y;
-        float ex = player->position.x - v1->x;
-        float ez = player->position.z - v1->y;
-        float len_sq = lx * lx + lz * lz;
-        float t = (len_sq > 0.0f) ? (ex * lx + ez * lz) / len_sq : 0.0f;
-        if (t < 0.0f) {
-            t = 0.0f;
-        } else if (t > 1.0f) {
-            t = 1.0f;
-        }
-        float cpx = v1->x + t * lx;
-        float cpz = v1->y + t * lz;
-        float cx = cpx - player->position.x;
-        float cz = cpz - player->position.z;
-        segs[i].dist_sq = cx * cx + cz * cz;
-    }
-
-    for (int i = 0; i < map->linedef_count - 1; i++) {
-        for (int j = i + 1; j < map->linedef_count; j++) {
-            if (segs[j].dist_sq < segs[i].dist_sq) {
-                RenderSeg temp = segs[i];
-                segs[i] = segs[j];
-                segs[j] = temp;
-            }
-        }
-    }
-
     float cos_a = cosf(player->angle);
     float sin_a = sinf(player->angle);
 
     for (int i = 0; i < map->linedef_count; i++) {
-        const Linedef *line = &map->linedefs[segs[i].index];
+        const Linedef *line = &map->linedefs[i];
         const Vertex *v1 = &map->vertices[line->start_vertex];
         const Vertex *v2 = &map->vertices[line->end_vertex];
 
@@ -135,7 +95,15 @@ void render_walls(const LevelMap *map, const PlayerState *player)
         int sx2 = (int)(HALF_W + tx2 * xscale2);
 
         if (sx1 >= sx2) {
-            continue;
+            int temp_x = sx1;
+            sx1 = sx2;
+            sx2 = temp_x;
+            float temp_f = tx1;
+            tx1 = tx2;
+            tx2 = temp_f;
+            temp_f = xscale1;
+            xscale1 = xscale2;
+            xscale2 = temp_f;
         }
 
         int draw_x1 = sx1 < 0 ? 0 : sx1;
