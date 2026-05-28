@@ -41,8 +41,14 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(raylib)
 
 # PWDoom executable
-file(GLOB_RECURSE PWDOOM_SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c"
+set(PWDOOM_SOURCES
+    src/game/collision.c
+    src/game/game.c
+    src/game/map.c
+    src/game/player.c
+    src/main.c
+    src/mem/arena.c
+    src/render/render.c
 )
 
 add_executable(${PROJECT_NAME} ${PWDOOM_SOURCES})
@@ -90,10 +96,20 @@ target_include_directories(test_smoke PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
-target_link_libraries(test_smoke PRIVATE raylib m)
 target_compile_options(test_smoke PRIVATE -Wall -Wextra)
+target_link_libraries(test_smoke PRIVATE raylib m)
 enable_testing()
 add_test(NAME smoke COMMAND test_smoke)
+
+# Arena tests (no raylib dependency)
+add_executable(test_arena tests/mem/arena_tests.c src/mem/arena.c)
+target_include_directories(test_arena PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+target_compile_options(test_arena PRIVATE -Wall -Wextra)
+target_link_libraries(test_arena PRIVATE m)
+add_test(NAME arena COMMAND test_arena)
 
 # Copy assets to build directory
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")

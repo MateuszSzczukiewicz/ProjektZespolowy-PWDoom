@@ -1,7 +1,9 @@
 #ifndef ARENA_H
 #define ARENA_H
 
+#ifndef ARENA_ZERO_UPON_RESET
 #define ARENA_ZERO_UPON_RESET 1
+#endif
 
 #include <assert.h>
 #include <stddef.h>
@@ -29,7 +31,10 @@ typedef const uint8_t *ReadOnlyBytePtr;
 
 static inline size_t arena_align_ptr(size_t x)
 {
-    return ((x) + sizeof(void *) - 1) & ~(sizeof(void *) - 1);
+    size_t mask = sizeof(void *) - 1;
+    if (x > SIZE_MAX - mask)
+        return x;
+    return (x + mask) & ~mask;
 }
 
 typedef struct {
