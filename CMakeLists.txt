@@ -48,6 +48,7 @@ set(PWDOOM_SOURCES
     src/game/player.c
     src/main.c
     src/mem/arena.c
+    src/render/bsp.c
     src/render/render.c
 )
 
