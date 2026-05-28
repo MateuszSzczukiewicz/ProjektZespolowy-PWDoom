@@ -2,7 +2,6 @@
 #define PWDOOM_GAME_H
 
 #include "raylib.h"
-#include "mem/arena.h"
 
 typedef struct {
     Vector2 player_pos;

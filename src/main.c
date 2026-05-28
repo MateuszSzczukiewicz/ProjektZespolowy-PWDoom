@@ -1,9 +1,10 @@
 #include "game/game.h"
+#include "mem/arena.h"
 #include "raylib.h"
 
 int main(void)
 {
-    t_arena scratch_arena = arena_create((size_t)(1024)*1024*1024*32);
+    Arena scratch_arena = arena_create((size_t)(1024) * 1024 * 1024 * 32);
 
     InitWindow(1280, 720, "PWDoom");
     SetTargetFPS(60);
