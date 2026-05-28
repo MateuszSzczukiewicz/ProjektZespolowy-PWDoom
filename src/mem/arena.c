@@ -39,38 +39,53 @@ Arena arena_create(size_t reserve_size)
 #endif
     arena.commit_boundary = arena.base;
     arena.current = arena.base;
-    return (arena);
+    return arena;
 }
 
-void *arena_alloc(Arena *arena, size_t size)
+static int arena_commit(Arena *a, size_t need)
 {
-    assert(arena != NULL);
+    size_t page = arena_page_size();
+    size_t commit_size = (need + page - 1) & ~(page - 1);
+    size_t remaining = (size_t)(a->base + a->reserve_size - a->commit_boundary);
+    if (commit_size > remaining)
+        commit_size = remaining;
+    if (commit_size < page)
+        return 0;
 
-    ReadOnlyBytePtr arena_end = arena->base + arena->reserve_size;
-    BytePtr new_current = arena->current + arena_align_ptr(size);
-
-    if (new_current > arena_end)
-        ARENA_FATAL_ERROR("Arena reserve size depleted");
-    if (new_current > arena->commit_boundary) {
-        size_t needed = (size_t)(new_current - arena->commit_boundary);
-        size_t commit_size = arena_align_page(needed + arena_page_size() * 16);
-        if (arena->commit_boundary + commit_size > arena_end)
-            commit_size = (size_t)(arena_end - arena->commit_boundary);
 #if defined(_WIN32)
-        const void *result =
-            VirtualAlloc(arena->commit_boundary, commit_size, MEM_COMMIT, PAGE_READWRITE);
-        if (result == NULL)
-            ARENA_FATAL_ERROR("VirtualAlloc failed in arena_alloc");
+    void *p = VirtualAlloc(a->commit_boundary, commit_size, MEM_COMMIT, PAGE_READWRITE);
+    if (p == NULL)
+        return 0;
 #else
-        const int result = mprotect(arena->commit_boundary, commit_size, PROT_READ | PROT_WRITE);
-        if (result != 0)
-            ARENA_FATAL_ERROR("mprotect failed in arena_alloc");
+    void *p = mmap(a->commit_boundary, commit_size, PROT_READ | PROT_WRITE,
+                   MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
+    if (p == MAP_FAILED)
+        return 0;
 #endif
-        arena->commit_boundary += commit_size;
+    a->commit_boundary += commit_size;
+    return 1;
+}
+
+void *arena_alloc(Arena *a, size_t size)
+{
+    assert(a != NULL);
+    if (size == 0)
+        return a->current;
+
+    size_t aligned = arena_align_ptr(size);
+    if (aligned < size)
+        return NULL;
+
+    BytePtr end = a->current + aligned;
+    if (end > a->commit_boundary) {
+        size_t need = (size_t)(end - a->commit_boundary);
+        if (!arena_commit(a, need))
+            return NULL;
     }
-    void *ret = (void *)arena->current;
-    arena->current = new_current;
-    return (ret);
+
+    void *ptr = a->current;
+    a->current = end;
+    return ptr;
 }
 
 void arena_reset(Arena *arena)
