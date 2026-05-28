@@ -75,6 +75,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     -fstack-protector-strong
 )
 
+
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 
 # Smoke tests (no raylib dependency)
