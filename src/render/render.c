@@ -21,8 +21,8 @@ static int16_t upper_clip[SCREEN_W];
 static int16_t lower_clip[SCREEN_W];
 static float zbuffer[SCREEN_W];
 
-static void draw_seg(const LevelMap *map, const PlayerState *player,
-                     Vertex v1, Vertex v2, const Linedef *line)
+static void draw_seg(const LevelMap *map, const PlayerState *player, Vertex v1, Vertex v2,
+                     const Linedef *line)
 {
     float cos_a = cosf(player->angle);
     float sin_a = sinf(player->angle);
@@ -47,8 +47,12 @@ static void draw_seg(const LevelMap *map, const PlayerState *player,
 
     if (side == 1) {
         float tmp;
-        tmp = dx1; dx1 = dx2; dx2 = tmp;
-        tmp = dz1; dz1 = dz2; dz2 = tmp;
+        tmp = dx1;
+        dx1 = dx2;
+        dx2 = tmp;
+        tmp = dz1;
+        dz1 = dz2;
+        dz2 = tmp;
     }
 
     float tx1 = dx1 * cos_a - dz1 * sin_a;
@@ -76,8 +80,12 @@ static void draw_seg(const LevelMap *map, const PlayerState *player,
     int sx2 = (int)(HALF_W + tx2 * xscale2);
 
     if (sx1 >= sx2) {
-        int temp_x = sx1; sx1 = sx2; sx2 = temp_x;
-        float temp_f = xscale1; xscale1 = xscale2; xscale2 = temp_f;
+        int temp_x = sx1;
+        sx1 = sx2;
+        sx2 = temp_x;
+        float temp_f = xscale1;
+        xscale1 = xscale2;
+        xscale2 = temp_f;
     }
 
     int draw_x1 = sx1 < 0 ? 0 : sx1;
@@ -222,8 +230,8 @@ static void draw_seg(const LevelMap *map, const PlayerState *player,
     }
 }
 
-static void bsp_render_node(const BSPTree *tree, const LevelMap *map,
-                            const PlayerState *player, int32_t index)
+static void bsp_render_node(const BSPTree *tree, const LevelMap *map, const PlayerState *player,
+                            int32_t index)
 {
     if (index < 0) {
         uint16_t leaf = (uint16_t)(-index - 1);
@@ -238,8 +246,8 @@ static void bsp_render_node(const BSPTree *tree, const LevelMap *map,
     }
 
     const BSPNode *node = &tree->nodes[index];
-    float s = (player->position.x - node->px) * node->pdy
-            - (player->position.z - node->py) * node->pdx;
+    float s =
+        (player->position.x - node->px) * node->pdy - (player->position.z - node->py) * node->pdx;
 
     if (s >= 0.0f) {
         bsp_render_node(tree, map, player, node->front);
@@ -250,8 +258,8 @@ static void bsp_render_node(const BSPTree *tree, const LevelMap *map,
     }
 }
 
-void render_walls(const LevelMap *map, const BSPTree *bsp,
-                  const PlayerState *player, Arena *scratch)
+void render_walls(const LevelMap *map, const BSPTree *bsp, const PlayerState *player,
+                  Arena *scratch)
 {
     assert(map != NULL);
     assert(bsp != NULL);

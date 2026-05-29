@@ -53,12 +53,12 @@ static int arena_commit(Arena *a, size_t need)
         return 0;
 
 #if defined(_WIN32)
-    void *p = VirtualAlloc(a->commit_boundary, commit_size, MEM_COMMIT, PAGE_READWRITE);
+    const void *p = VirtualAlloc(a->commit_boundary, commit_size, MEM_COMMIT, PAGE_READWRITE);
     if (p == NULL)
         return 0;
 #else
-    void *p = mmap(a->commit_boundary, commit_size, PROT_READ | PROT_WRITE,
-                   MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
+    const void *p = mmap(a->commit_boundary, commit_size, PROT_READ | PROT_WRITE,
+                         MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
     if (p == MAP_FAILED)
         return 0;
 #endif
