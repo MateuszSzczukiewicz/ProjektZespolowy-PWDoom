@@ -21,9 +21,8 @@ static int point_class(float px, float py, float lx, float ly, float dx, float d
     return 0;
 }
 
-static void intersect(float ax, float ay, float adx, float ady,
-                      float bx, float by, float bdx, float bdy,
-                      float *ox, float *oy)
+static void intersect(float ax, float ay, float adx, float ady, float bx, float by, float bdx,
+                      float bdy, float *ox, float *oy)
 {
     float denom = adx * bdy - ady * bdx;
     if (fabsf(denom) < 0.0001f) {
@@ -126,8 +125,7 @@ static int32_t build_node(BSPTree *tree, const uint16_t *indices, uint16_t count
             float ix, iy;
             float edx = seg->v2.x - seg->v1.x;
             float edy = seg->v2.y - seg->v1.y;
-            intersect(seg->v1.x, seg->v1.y, edx, edy,
-                      part->v1.x, part->v1.y, pdx, pdy, &ix, &iy);
+            intersect(seg->v1.x, seg->v1.y, edx, edy, part->v1.x, part->v1.y, pdx, pdy, &ix, &iy);
 
             uint16_t orig = indices[i];
             Vertex orig_v1 = seg->v1;

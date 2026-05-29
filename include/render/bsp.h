@@ -6,8 +6,8 @@
 
 #include <stdint.h>
 
-#define MAX_BSP_NODES 4096
-#define MAX_BSP_SEGS  8192
+#define MAX_BSP_NODES  4096
+#define MAX_BSP_SEGS   8192
 #define MAX_BSP_LEAVES 2048
 
 typedef struct {
