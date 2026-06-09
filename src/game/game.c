@@ -39,5 +39,8 @@ void game_render(const GameState *game, Arena *scratch)
 void game_shutdown(GameState *game)
 {
     assert(game != NULL);
-    (void)game;
+    game->bsp.node_count = 0;
+    game->bsp.seg_count = 0;
+    game->bsp.leaf_count = 0;
+    game->bsp.leaf_seg_count = 0;
 }

@@ -1,5 +1,5 @@
-#ifndef WAD_H
-#define WAD_H
+#ifndef PWDOOM_WAD_H
+#define PWDOOM_WAD_H
 
 #include "mem/arena.h"
 
