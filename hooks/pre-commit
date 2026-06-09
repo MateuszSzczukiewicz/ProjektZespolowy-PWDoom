@@ -1,0 +1,23 @@
+#!/bin/sh
+
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|h)$')
+
+if [ -z "$FILES" ]; then
+    exit 0
+fi
+
+if ! command -v clang-format >/dev/null 2>&1; then
+    echo "ERROR: clang-format not found. Install it to use the pre-commit hook."
+    exit 1
+fi
+
+for FILE in $FILES; do
+    if ! clang-format --dry-run --Werror "$FILE" 2>/dev/null; then
+        echo "ERROR: $FILE is not correctly formatted."
+        echo "Run: clang-format -i $FILE"
+        exit 1
+    fi
+done
+
+echo "clang-format check passed."
+exit 0

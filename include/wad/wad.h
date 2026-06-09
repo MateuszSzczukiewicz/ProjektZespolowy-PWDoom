@@ -1,25 +1,27 @@
 #ifndef WAD_H
 #define WAD_H
 
-#include <stdint.h>
+#include "mem/arena.h"
+
 #include <stdbool.h>
 #include <stddef.h>
-#include <raylib.h>
-#include "mem/arena.h"
+#include <stdint.h>
 
 typedef struct {
     char name[9];
-    const uint8_t* data;
+    const uint8_t *data;
     size_t size;
 } WadLump;
 
-bool            wad_init(const char** filepaths, int num_files, Arena* arena);
-void            wad_forget(void); // Makes all the data unaccesible but does not reset the arena
-const WadLump*  wad_get_lump_by_name(const char* name);
-const WadLump*  wad_get_lump_by_index(int index);
-int             wad_get_lump_count(void);
+typedef struct {
+    WadLump *lumps;
+    int count;
+} WadState;
 
-void wad_generate_test(const char* filename);
-void wad_debug_dump(void);
-void wad_test(void);
+bool wad_init(const char **paths, int num_files, Arena *arena, Arena *scratch, WadState *state);
+void wad_free(WadState *state);
+const WadLump *wad_get_lump_by_name(const WadState *state, const char *name);
+const WadLump *wad_get_lump_by_index(const WadState *state, int index);
+int wad_get_lump_count(const WadState *state);
+
 #endif
