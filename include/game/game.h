@@ -12,6 +12,8 @@ typedef struct {
     LevelMap map;
     BSPTree bsp;
     Camera3D camera;
+    Music bgm;
+    bool muted;
 } GameState;
 
 void game_init(GameState *game, Arena *scratch);
