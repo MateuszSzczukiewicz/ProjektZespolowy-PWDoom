@@ -6,6 +6,7 @@ int main(void)
 {
     Arena scratch_arena = arena_create((size_t)1024 * 1024 * 1024);
 
+    InitAudioDevice();
     InitWindow(1280, 720, "PWDoom");
     SetTargetFPS(60);
 
@@ -24,6 +25,7 @@ int main(void)
     }
 
     game_shutdown(&game);
+    CloseAudioDevice();
     CloseWindow();
     arena_destroy(&scratch_arena);
     return 0;
