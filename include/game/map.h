@@ -60,4 +60,7 @@ float get_floor_height(const LevelMap *map, float x, float z);
 
 void map_init(LevelMap *map);
 
+#include "wad/wad.h"
+bool map_load_from_wad(LevelMap *map, const WadState *wad, const char *map_lump_name);
+
 #endif
