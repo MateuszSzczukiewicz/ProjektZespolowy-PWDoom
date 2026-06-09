@@ -4,7 +4,7 @@
 
 int main(void)
 {
-    Arena scratch_arena = arena_create((size_t)32 * 1024 * 1024 * 1024);
+    Arena scratch_arena = arena_create((size_t)1024 * 1024 * 1024);
 
     InitWindow(1280, 720, "PWDoom");
     SetTargetFPS(60);
