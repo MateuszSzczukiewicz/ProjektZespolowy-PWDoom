@@ -7,6 +7,10 @@
 #include "raylib.h"
 #include "render/bsp.h"
 
+#include <stdbool.h>
+
+typedef enum { MODE_MENU, MODE_PLAYING, MODE_PAUSED } GameMode;
+
 typedef struct {
     PlayerState player;
     LevelMap map;
@@ -14,6 +18,9 @@ typedef struct {
     Camera3D camera;
     Music bgm;
     bool muted;
+    GameMode mode;
+    int menu_selection;
+    Texture2D title_screen;
 } GameState;
 
 void game_init(GameState *game, Arena *scratch);
