@@ -23,8 +23,8 @@ static void test_bsp_build_counts(void)
         total_leaf += tree.leaves[i].count;
     assert(total_leaf == tree.leaf_seg_count);
 
-    printf("  build counts: OK (nodes=%u, leaves=%u, segs=%u, leaf_segs=%u)\n",
-           tree.node_count, tree.leaf_count, tree.seg_count, tree.leaf_seg_count);
+    printf("  build counts: OK (nodes=%u, leaves=%u, segs=%u, leaf_segs=%u)\n", tree.node_count,
+           tree.leaf_count, tree.seg_count, tree.leaf_seg_count);
 }
 
 static void test_bsp_no_stale_segs(void)

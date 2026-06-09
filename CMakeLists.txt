@@ -50,6 +50,7 @@ set(PWDOOM_SOURCES
     src/mem/arena.c
     src/render/bsp.c
     src/render/render.c
+    src/wad/wad.c
 )
 
 add_executable(${PROJECT_NAME} ${PWDOOM_SOURCES})
@@ -121,6 +122,16 @@ target_include_directories(test_bsp PRIVATE
 target_compile_options(test_bsp PRIVATE -Wall -Wextra)
 target_link_libraries(test_bsp PRIVATE m)
 add_test(NAME bsp COMMAND test_bsp)
+
+# WAD tests (no raylib dependency)
+add_executable(test_wad tests/wad/wad_tests.c src/wad/wad.c src/mem/arena.c)
+target_include_directories(test_wad PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+target_compile_options(test_wad PRIVATE -Wall -Wextra)
+target_link_libraries(test_wad PRIVATE m)
+add_test(NAME wad COMMAND test_wad)
 
 # Copy assets to build directory
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
