@@ -16,7 +16,7 @@
 #define HALF_W   (SCREEN_W / 2.0f)
 #define HALF_H   (SCREEN_H / 2.0f)
 
-#define PROJ_DIST HALF_W
+#define PROJ_DIST 1280.0f
 
 static int16_t upper_clip[SCREEN_W];
 static int16_t lower_clip[SCREEN_W];
