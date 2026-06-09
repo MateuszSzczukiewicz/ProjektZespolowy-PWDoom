@@ -9,6 +9,7 @@
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #define SCREEN_W 1280
 #define SCREEN_H 720
@@ -245,6 +246,10 @@ static void bsp_render_node(const BSPTree *tree, const LevelMap *map, const Play
         return;
     }
 
+    if (index >= tree->node_count) {
+        return;
+    }
+
     const BSPNode *node = &tree->nodes[index];
     float s =
         (player->position.x - node->px) * node->pdy - (player->position.z - node->py) * node->pdx;
@@ -271,9 +276,9 @@ void render_walls(const LevelMap *map, const BSPTree *bsp, const PlayerState *pl
         lower_clip[i] = SCREEN_H;
         zbuffer[i] = FLT_MAX;
     }
-
-    if (bsp->node_count > 0)
+    if (bsp->node_count > 0) {
         bsp_render_node(bsp, map, player, 0);
-    else if (bsp->leaf_count > 0)
+    } else if (bsp->leaf_count > 0) {
         bsp_render_node(bsp, map, player, -(int32_t)1);
+    }
 }

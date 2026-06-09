@@ -16,8 +16,8 @@ void player_init(PlayerState *player)
 {
     assert(player != NULL);
 
-    player->position = (Vector3){1.5f, PLAYER_EYE_HEIGHT, 1.5f};
-    player->angle = 0.0f;
+    player->position = (Vector3){-1920.0f, PLAYER_EYE_HEIGHT, -32.0f};
+    player->angle = 90.0f * 3.14159265f / 180.0f;
     player->speed = PLAYER_MOVE_SPEED;
     player->dx = 0.0f;
     player->dz = 0.0f;

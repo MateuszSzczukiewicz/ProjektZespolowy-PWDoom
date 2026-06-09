@@ -7,6 +7,7 @@
 #include "wad/wad.h"
 
 #include <assert.h>
+#include <stdio.h>
 #include <string.h>
 
 #define MENU_ITEMS 2
@@ -35,6 +36,15 @@ void game_init(GameState *game, Arena *scratch)
     wad_free(&wad);
     arena_destroy(&wad_arena);
     arena_destroy(&wad_scratch);
+
+    bsp_build(&game->bsp, &game->map, scratch);
+    player_init(&game->player);
+    if (game->map.player_start.x != 0.0f || game->map.player_start.y != 0.0f) {
+        game->player.position.x = game->map.player_start.x;
+        game->player.position.z = game->map.player_start.y;
+        game->player.angle = game->map.player_angle * 3.14159265f / 180.0f;
+    }
+    player_update_camera(&game->player, &game->camera);
 
     game->bgm = LoadMusicStream("assets/music/Lunar_Tectonics.mp3");
     if (game->bgm.frameCount > 0) {

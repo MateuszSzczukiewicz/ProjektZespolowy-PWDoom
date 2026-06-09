@@ -53,6 +53,9 @@ typedef struct {
 
     Linedef linedefs[MAX_LINEDEFS];
     uint16_t linedef_count;
+
+    Vertex player_start;
+    float player_angle;
 } LevelMap;
 
 uint16_t get_sector_at(const LevelMap *map, float x, float z);

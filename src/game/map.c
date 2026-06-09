@@ -95,6 +95,25 @@ static bool load_sectors(LevelMap *map, const WadState *wad)
     return true;
 }
 
+static void load_things(LevelMap *map, const WadState *wad)
+{
+    const WadLump *lump = wad_get_lump_by_name(wad, "THINGS");
+    if (!lump || lump->size == 0)
+        return;
+
+    size_t count = lump->size / 10;
+    for (size_t i = 0; i < count; i++) {
+        const uint8_t *entry = lump->data + (i * 10);
+        int16_t type = read_i16(entry + 6);
+        if (type == 1) {
+            map->player_start.x = (float)read_i16(entry);
+            map->player_start.y = (float)read_i16(entry + 2);
+            map->player_angle = (float)read_i16(entry + 4);
+            break;
+        }
+    }
+}
+
 bool map_load_from_wad(LevelMap *map, const WadState *wad, const char *map_lump_name)
 {
     assert(map != NULL);
@@ -114,6 +133,7 @@ bool map_load_from_wad(LevelMap *map, const WadState *wad, const char *map_lump_
         return false;
     if (!load_sectors(map, wad))
         return false;
+    load_things(map, wad);
 
     return map->vertex_count > 0 && map->linedef_count > 0 && map->sector_count > 0;
 }
